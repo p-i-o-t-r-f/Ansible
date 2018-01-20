@@ -1,0 +1,37 @@
+---
+- name: Get Device Facts
+  hosts: EX
+  roles:
+  - Juniper.junos
+  connection: local
+  gather_facts: no
+
+  vars:
+  - portno: 22
+ 
+  vars_prompt:
+  - name: USERNAME
+    prompt: Username
+    private: no
+  - name: DEVICE_PASSWORD
+    prompt: Password
+    private: yes
+
+  tasks:
+  - name: Retrieve information from devices running Junos OS
+    junos_get_facts:
+     host={{ inventory_hostname }}
+     user={{ USERNAME }}
+     port={{ portno }}
+     passwd={{ DEVICE_PASSWORD }}
+    register: junos
+  - name: version
+    debug: msg="{{ junos.facts.version }}"
+  - name:  Disable LLDP
+    junos_install_config:
+      host={{ inventory_hostname }}
+      user={{ USERNAME }}
+      port={{ portno }}
+      passwd={{ DEVICE_PASSWORD }}
+      file=config-user.set
+      overwrite=false
