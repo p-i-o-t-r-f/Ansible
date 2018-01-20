@@ -1,0 +1,28 @@
+---
+- name: Get Device Facts
+  hosts: SRX
+  roles:
+  - Juniper.junos
+  connection: local
+  gather_facts: no
+
+  vars:
+  - portno: 22
+ 
+  vars_prompt:
+  - name: USERNAME
+    prompt: Username
+    private: no
+  - name: DEVICE_PASSWORD
+    prompt: Password
+    private: yes
+
+  tasks:
+  - name:  provide Firewall filter
+    junos_install_config:
+      host={{ inventory_hostname }}
+      user={{ USERNAME }}
+      port={{ portno }}
+      passwd={{ DEVICE_PASSWORD }}
+      file=config-user.set
+      overwrite=false
